@@ -4,7 +4,7 @@ Installation
 ============
 
 Pip4Blender is installed exactly like any other Blender add-on, and is distributed
-as a single Python file.
+as a single Python file.  The latest release can be downloaded from https://github.com/AO-StreetArt/pip4blender/releases.
 
 Add-on Install
 --------------
