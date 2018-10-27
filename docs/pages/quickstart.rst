@@ -3,11 +3,13 @@
 Getting Started
 ===============
 
+Now that the add-on is installed, we can use it to install any Python package
+available over pip.
+
 Installing a Library with Pip
 -----------------------------
 
-Now that the add-on is installed, we can use it to install any Python package
-available over pip.  This is done by specifying the package name, then using the
+Installing a single package is done by specifying the package name, then using the
 'Install Python Library' button:
 
 .. image:: _images/Install_Library.png

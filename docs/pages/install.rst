@@ -3,11 +3,11 @@
 Installation
 ============
 
-Add-on Install
---------------
-
 Pip4Blender is installed exactly like any other Blender add-on, and is distributed
 as a single Python file.
+
+Add-on Install
+--------------
 
 From the User Preferences panel, select 'Install Addon from File', and select the
 pip4blender.py file.
