@@ -23,5 +23,3 @@ functionality of the add-on is accessed.  This can be done by selecting the
 Blender installation.
 
 .. image:: _images/Install_Pip.png
-
-:ref:`Continue on to Get Started using pip4blender<quickstart>`
