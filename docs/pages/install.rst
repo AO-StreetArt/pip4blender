@@ -22,4 +22,7 @@ functionality of the add-on is accessed.  This can be done by selecting the
 'Install Pip in Blender' button, but only needs to be done once for any given
 Blender installation.
 
+This might take a few minutes to run, if you want to watch the installation
+progress you should run Blender from a terminal.
+
 .. image:: _images/Install_Pip.png
