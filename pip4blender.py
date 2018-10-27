@@ -70,6 +70,40 @@ class InstallPip(bpy.types.Operator):
         return {'FINISHED'}
 
 # Install Python packages from Blender
+class GenerateRequirementsFile(bpy.types.Operator):
+    bl_idname = "object.generate_requirements_file"
+    bl_label = "Generate Requirements File"
+    bl_options = {'REGISTER'}
+    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+
+    # Called when operator is run
+    def execute(self, context):
+        req_file = self.filepath
+        print(req_file)
+        if (req_file != ""):
+            print("Generating Requirements file")
+
+            # Find the location of the python executable
+            executable_location = find_python_executable()
+
+            # Call get-pip with the blender python executable
+            pip_install_command = "%s -m pip freeze > %s" % (executable_location, req_file)
+            call(pip_install_command, shell=True)
+
+        # Let's blender know the operator is finished
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+
+        context.window_manager.fileselect_add(self)
+        #Open browser, take reference to 'self'
+        #read the path to selected file,
+        #put path in declared string type data structure self.filepath
+
+        return {'RUNNING_MODAL'}
+        # Tells Blender to hang on for the slow user input
+
+# Install Python packages from Blender
 class InstallRequirementsFile(bpy.types.Operator):
     bl_idname = "object.install_requirements_file"
     bl_label = "Install Requirements File"
@@ -79,7 +113,8 @@ class InstallRequirementsFile(bpy.types.Operator):
     # Called when operator is run
     def execute(self, context):
         req_file = self.filepath
-        if (pkg_name != ""):
+        print(req_file)
+        if (req_file != ""):
             print("Installing Python packages from requirements file")
 
             # Find the location of the python executable
@@ -144,17 +179,20 @@ class Pip4BlenderPreferences(bpy.types.AddonPreferences):
         layout.label(text="Install a Python Package")
         layout.prop(self, "package_name")
         layout.operator("object.install_python_library")
+        layout.operator("object.generate_requirements_file")
         layout.operator("object.install_requirements_file")
 
 
 def register():
     bpy.utils.register_class(InstallPip)
     bpy.utils.register_class(InstallPythonLibrary)
+    bpy.utils.register_class(GenerateRequirementsFile)
     bpy.utils.register_class(InstallRequirementsFile)
     bpy.utils.register_class(Pip4BlenderPreferences)
 
 def unregister():
     bpy.utils.unregister_class(Pip4BlenderPreferences)
     bpy.utils.unregister_class(InstallPip)
+    bpy.utils.unregister_class(GenerateRequirementsFile)
     bpy.utils.unregister_class(InstallRequirementsFile)
     bpy.utils.unregister_class(InstallPythonLibrary)

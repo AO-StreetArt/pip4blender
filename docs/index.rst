@@ -8,4 +8,4 @@
 
    pages/install.rst
    pages/quickstart.rst
-   pages/addon_dependencies.rst
+   pages/developing.rst
