@@ -35,7 +35,7 @@ bl_info = {
 
 import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty, CollectionProperty
-import os
+import os, platform
 from subprocess import call, STDOUT
 import urllib.request
 from pathlib import Path
@@ -43,7 +43,13 @@ from pathlib import Path
 def find_python_executable():
     # Find the location of the python executable
     os_install_location = Path(os.__file__)
-    python_path = (os_install_location.parents[0] / ".." / ".." / "bin" / "python3.5m")
+    python_path = None
+    base_path = (os_install_location.parents[0] / "..")
+    if platform.system() == "Windows":
+        full_path = (base_path / "bin" / "python.exe")
+        python_path = '"%s"' % full_path
+    else:
+        python_path = (base_path / ".." / "bin" / "python3.5m")
     print("Found Python Executable: %s" % python_path)
     return python_path
 
@@ -59,11 +65,12 @@ class InstallPip(bpy.types.Operator):
         print("Installing Pip in Blender")
 
         # Get the get-pip script
-        urllib.request.urlretrieve("https://bootstrap.pypa.io/get-pip.py", "get-pip.py")
+        get_pip_path = Path.home() / "get-pip.py"
+        urllib.request.urlretrieve("https://bootstrap.pypa.io/get-pip.py", "%s" % get_pip_path)
         # Find the location of the python executable
         executable_location = find_python_executable()
         # Call get-pip with the blender python executable
-        get_pip_command = "%s get-pip.py --user" % executable_location
+        get_pip_command = "%s %s --user" % (executable_location, get_pip_path)
         call(get_pip_command, shell=True)
 
         # Let's blender know the operator is finished
