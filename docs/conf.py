@@ -99,7 +99,7 @@ html_theme_options = {
     'navbar_links': [
         ("Install", "pages/install"),
         ("Getting Started", "pages/quickstart"),
-        ("Developing with Pip4Blender", "pages/addon_dependencies"),
+        ("Developing with Pip4Blender", "pages/developing"),
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
