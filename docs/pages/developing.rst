@@ -17,6 +17,8 @@ Upgrading a library can be accomplished by pre-pending '--upgrade' to the name
 of the library.  For example, to upgrade the requests library, we would enter
 '--upgrade requests' into the 'Package Name' text field, then hit 'Install Python Library'.
 
+Be warned: DO NOT upgrade a package that came with Blender by default.
+
 Distribution
 ------------
 

@@ -9,3 +9,4 @@
    pages/install.rst
    pages/quickstart.rst
    pages/developing.rst
+   pages/known_limitations.rst
