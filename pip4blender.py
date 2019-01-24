@@ -28,7 +28,7 @@ bl_info = {
     "name": "Pip4Blender",
     "author": "AO Labs",
     "version": (0, 0, 1),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "description": "Blender Add-on to support installing Python Libraries via pip",
     "category": "Development",
 }
@@ -39,6 +39,7 @@ import os, platform
 from subprocess import call, STDOUT
 import urllib.request
 from pathlib import Path
+import ssl
 
 def find_python_executable():
     # Find the location of the python executable
@@ -49,16 +50,16 @@ def find_python_executable():
         full_path = (base_path / "bin" / "python.exe")
         python_path = '"%s"' % full_path
     else:
-        python_path = (base_path / ".." / "bin" / "python3.5m")
+        python_path = (base_path / ".." / "bin" / "python3.7m")
     print("Found Python Executable: %s" % python_path)
     return python_path
 
 # Install Pip for Blender's Python interpreter
-class InstallPip(bpy.types.Operator):
+class OBJECT_OT_InstallPip(bpy.types.Operator):
     bl_idname = "object.install_pip"
     bl_label = "Install Pip in Blender"
     bl_options = {'REGISTER'}
-    file_path = bpy.props.StringProperty(name="File Path", default="")
+    file_path: bpy.props.StringProperty(name="File Path", default="")
 
     # Called when operator is run
     def execute(self, context):
@@ -66,7 +67,8 @@ class InstallPip(bpy.types.Operator):
 
         # Get the get-pip script
         get_pip_path = Path.home() / "get-pip.py"
-        urllib.request.urlretrieve("https://bootstrap.pypa.io/get-pip.py", "%s" % get_pip_path)
+        ssl._create_default_https_context = ssl._create_unverified_context
+        urllib.request.urlretrieve("http://bootstrap.pypa.io/get-pip.py", "%s" % get_pip_path)
         # Find the location of the python executable
         executable_location = find_python_executable()
         # Call get-pip with the blender python executable
@@ -77,11 +79,11 @@ class InstallPip(bpy.types.Operator):
         return {'FINISHED'}
 
 # Install Python packages from Blender
-class GenerateRequirementsFile(bpy.types.Operator):
+class OBJECT_OT_GenerateRequirementsFile(bpy.types.Operator):
     bl_idname = "object.generate_requirements_file"
     bl_label = "Generate Requirements File"
     bl_options = {'REGISTER'}
-    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
 
     # Called when operator is run
     def execute(self, context):
@@ -111,11 +113,11 @@ class GenerateRequirementsFile(bpy.types.Operator):
         # Tells Blender to hang on for the slow user input
 
 # Install Python packages from Blender
-class InstallRequirementsFile(bpy.types.Operator):
+class OBJECT_OT_InstallRequirementsFile(bpy.types.Operator):
     bl_idname = "object.install_requirements_file"
     bl_label = "Install Requirements File"
     bl_options = {'REGISTER'}
-    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
 
     # Called when operator is run
     def execute(self, context):
@@ -145,14 +147,14 @@ class InstallRequirementsFile(bpy.types.Operator):
         # Tells Blender to hang on for the slow user input
 
 # Install Python packages from Blender
-class InstallPythonLibrary(bpy.types.Operator):
+class OBJECT_OT_InstallPythonLibrary(bpy.types.Operator):
     bl_idname = "object.install_python_library"
     bl_label = "Install Python Library"
     bl_options = {'REGISTER'}
 
     # Called when operator is run
     def execute(self, context):
-        addon_prefs = context.user_preferences.addons[__name__].preferences
+        addon_prefs = context.preferences.addons[__name__].preferences
         pkg_name = addon_prefs.package_name
         if (pkg_name != ""):
             print("Installing Python packages")
@@ -173,15 +175,17 @@ class Pip4BlenderPreferences(bpy.types.AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    package_name = StringProperty(
+    package_name: StringProperty(
             name="Package Name",
             default=""
             )
 
     def draw(self, context):
         layout = self.layout
-        layout.label("Install Pip in Blender")
-        layout.label("This should be done once for your Blender installation, and will not be undone if you remove the addon")
+        layout.use_property_split = True # Active single-column layout
+        # view = context.scene.view_settings
+        layout.label(text="Install Pip in Blender")
+        layout.label(text="This should be done once for your Blender installation, and will not be undone if you remove the addon")
         layout.operator("object.install_pip")
         layout.label(text="Install a Python Package")
         layout.prop(self, "package_name")
@@ -191,15 +195,15 @@ class Pip4BlenderPreferences(bpy.types.AddonPreferences):
 
 
 def register():
-    bpy.utils.register_class(InstallPip)
-    bpy.utils.register_class(InstallPythonLibrary)
-    bpy.utils.register_class(GenerateRequirementsFile)
-    bpy.utils.register_class(InstallRequirementsFile)
+    bpy.utils.register_class(OBJECT_OT_InstallPip)
+    bpy.utils.register_class(OBJECT_OT_InstallPythonLibrary)
+    bpy.utils.register_class(OBJECT_OT_GenerateRequirementsFile)
+    bpy.utils.register_class(OBJECT_OT_InstallRequirementsFile)
     bpy.utils.register_class(Pip4BlenderPreferences)
 
 def unregister():
     bpy.utils.unregister_class(Pip4BlenderPreferences)
-    bpy.utils.unregister_class(InstallPip)
-    bpy.utils.unregister_class(GenerateRequirementsFile)
-    bpy.utils.unregister_class(InstallRequirementsFile)
-    bpy.utils.unregister_class(InstallPythonLibrary)
+    bpy.utils.unregister_class(OBJECT_OT_InstallPip)
+    bpy.utils.unregister_class(OBJECT_OT_GenerateRequirementsFile)
+    bpy.utils.unregister_class(OBJECT_OT_InstallRequirementsFile)
+    bpy.utils.unregister_class(OBJECT_OT_InstallPythonLibrary)
